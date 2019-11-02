@@ -5,8 +5,28 @@ from typing import List
 
 class ListNode:
     def __init__(self, x):
-        self.val = x
-        self.next = None
+        if isinstance(x, list):
+            self.val = x[0]
+            self.next = None
+            for val in x[1:]:
+                self.insert(val)
+        else:
+            self.val = x
+            self.next = None
+
+    def insert(self, x):
+        last = self
+        while last.next:
+            last = last.next
+        last.next = ListNode(x)
+
+    def toList(self):
+        res = []
+        cur = self
+        while cur:
+            res.append(cur.val)
+            cur = cur.next
+        return res
 
 
 ###SOLUTIONS###
@@ -497,6 +517,30 @@ def threeSum(nums: List[int]) -> List[List[int]]:
                 else:
                     triplets.add((pivot, number, remaining))
     return [*map(list, triplets)]
+
+
+# 19
+def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
+    """
+    Given a linked list, remove the n-th node from the end of list and return its head.
+    Example: Given linked list: 1->2->3->4->5, and n = 2.
+    After removing the second node from the end, the linked list becomes 1->2->3->5.
+    Note: Given n will always be valid.
+    Follow up: Could you do this in one pass?
+    """
+    temp = ListNode(None)  # Create and prepend a new list node
+    temp.next = head
+    ptr1 = ptr2 = temp  # ptr1 is never ahead of ptr2
+
+    for _ in range(n):
+        ptr2 = ptr2.next
+
+    while ptr2.next:
+        ptr1 = ptr1.next
+        ptr2 = ptr2.next
+
+    ptr1.next = ptr1.next.next
+    return temp.next
 
 
 def letter_combinations(digits: str) -> List[str]:

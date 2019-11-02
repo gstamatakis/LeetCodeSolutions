@@ -20,30 +20,9 @@ class LeetTests(unittest.TestCase):
         Output: 7 -> 0 -> 8
         Explanation: 342 + 465 = 807.
         """
-        a1 = ListNode(2)
-        a12 = ListNode(4)
-        a13 = ListNode(3)
-        a1.next = a12
-        a12.next = a13
-
-        b1 = ListNode(5)
-        b12 = ListNode(6)
-        b13 = ListNode(4)
-        b1.next = b12
-        b12.next = b13
-
-        c1 = ListNode(7)
-        c12 = ListNode(0)
-        c13 = ListNode(8)
-        c1.next = c12
-        c12.next = c13
-
-        res = addTwoNumbers(a1, b1)
-
-        while c1 or res:
-            self.assertEqual(c1.val, res.val)
-            c1 = (c1.next if c1 else None)
-            res = (res.next if res else None)
+        a, b, c = ListNode([2, 4, 3]), ListNode([5, 6, 4]), ListNode([7, 0, 8])
+        res = addTwoNumbers(a, b)
+        self.assertListEqual(res.toList(), c.toList())
 
     # 3
     def test_lengthOfLongestSubstring(self):
@@ -135,6 +114,13 @@ class LeetTests(unittest.TestCase):
         self.assertEqual(threeSum([1, 1, 1, 1, 1]), [])
         self.assertEqual(threeSum([0, 0, 0]), [[0, 0, 0]])
         self.assertEqual(threeSum([0, 0, 0, 0, 0]), [[0, 0, 0]])
+
+    # 19
+    def test_remove_nth_from_end(self):
+        ll1 = ListNode([1, 2, 3, 4, 5])
+        ll2 = ListNode([1, 2, 3, 5])
+        res = removeNthFromEnd(ll1, 2)
+        self.assertListEqual(ll2.toList(), res.toList())
 
     def test_letter_combinations(self):
         self.assertEqual(letter_combinations("23"), ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"])
