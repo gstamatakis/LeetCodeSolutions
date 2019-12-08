@@ -139,6 +139,7 @@ class LeetTests(unittest.TestCase):
 
     # 22
     def test_generate_parenthesis(self):
+        self.assertListEqual(generateParenthesis(0), [''])
         self.assertListEqual(generateParenthesis(3), ["((()))",
                                                       "(()())",
                                                       "(())()",

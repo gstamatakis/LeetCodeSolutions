@@ -605,8 +605,12 @@ def generateParenthesis(n: int) -> List[str]:
       "()()()"
     ]
     """
+    if n < 1:
+        return ['']
 
-    def generate(ans, arr=None):
+    def generate(n, ans=None, arr=None):
+        if ans is None:
+            ans = []
         if arr is None:
             arr = []
         if len(arr) == 2 * n:
@@ -614,10 +618,10 @@ def generateParenthesis(n: int) -> List[str]:
                 ans.append(''.join(arr))
         else:
             arr.append('(')
-            generate(ans, arr)
+            generate(n, ans, arr)
             arr.pop()
             arr.append(')')
-            generate(ans, arr)
+            generate(n, ans, arr)
             arr.pop()
 
     def valid(arr):
@@ -632,7 +636,7 @@ def generateParenthesis(n: int) -> List[str]:
         return bal == 0
 
     answer = []
-    generate(answer)
+    generate(n, answer)
     return answer
 
 
