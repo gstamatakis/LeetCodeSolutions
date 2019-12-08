@@ -543,6 +543,99 @@ def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
     return temp.next
 
 
+# 20
+def validParenthesis(s: str) -> bool:
+    """
+    Given a string containing just the characters '(', ')', '{', '}', '[' and ']',
+    determine if the input string is valid.
+    An input string is valid if:
+    Open brackets must be closed by the same type of brackets.
+    Open brackets must be closed in the correct order.
+    Note that an empty string is also considered valid.
+
+    Runtime: 32 ms, faster than 94.70% of Python3 online submissions for Valid Parentheses.
+    Memory Usage: 13.8 MB, less than 5.22% of Python3 online submissions for Valid Parentheses.
+    """
+    syms = {'(': ')', '{': '}', '[': ']'}
+    stack = []
+    for c in s:
+        if c in syms.keys():
+            stack.append(c)
+        elif c in syms.values() and stack:
+            p = stack.pop()
+            if syms[p] != c:
+                return False
+        else:
+            return False
+    return not stack
+
+
+# 21
+def mergeTwoLists(l1: ListNode, l2: ListNode) -> ListNode:
+    """
+    Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+    Example:
+    Input: 1->2->4, 1->3->4
+    Output: 1->1->2->3->4->4
+    """
+    head = current = ListNode(0)
+    while l1 and l2:
+        if l1.val < l2.val:
+            current.next = l1
+            l1 = l1.next
+        else:
+            current.next = l2
+            l2 = l2.next
+        current = current.next
+    current.next = l1 if l1 else l2
+    return head.next
+
+
+# 22. Generate Parentheses
+
+def generateParenthesis(n: int) -> List[str]:
+    """"
+    Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+    For example, given n = 3, a solution set is:
+    [
+      "((()))",
+      "(()())",
+      "(())()",
+      "()(())",
+      "()()()"
+    ]
+    """
+
+    def generate(ans, arr=None):
+        if arr is None:
+            arr = []
+        if len(arr) == 2 * n:
+            if valid(arr):
+                ans.append(''.join(arr))
+        else:
+            arr.append('(')
+            generate(ans, arr)
+            arr.pop()
+            arr.append(')')
+            generate(ans, arr)
+            arr.pop()
+
+    def valid(arr):
+        bal = 0
+        for c in arr:
+            if c == '(':
+                bal += 1
+            else:
+                bal -= 1
+            if bal < 0:
+                return False
+        return bal == 0
+
+    answer = []
+    generate(answer)
+    return answer
+
+
 def letter_combinations(digits: str) -> List[str]:
     if not digits:
         return []

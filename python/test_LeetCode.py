@@ -122,6 +122,29 @@ class LeetTests(unittest.TestCase):
         res = removeNthFromEnd(ll1, 2)
         self.assertListEqual(ll2.toList(), res.toList())
 
+    # 20
+    def test_valid_parenthesis(self):
+        self.assertTrue(validParenthesis('()'))
+        self.assertTrue(validParenthesis('()[]{}'))
+        self.assertFalse(validParenthesis('(]'))
+        self.assertFalse(validParenthesis('([)]'))
+        self.assertTrue(validParenthesis('{[]}'))
+
+    # 21
+    def test_merge_two_sorted_lists(self):
+        ll1 = ListNode([1, 2, 4])
+        ll2 = ListNode([1, 3, 4])
+        ll3 = ListNode([1, 1, 2, 3, 4, 4])
+        self.assertListEqual(mergeTwoLists(ll1, ll2).toList(), ll3.toList())
+
+    # 22
+    def test_generate_parenthesis(self):
+        self.assertListEqual(generateParenthesis(3), ["((()))",
+                                                      "(()())",
+                                                      "(())()",
+                                                      "()(())",
+                                                      "()()()"])
+
     def test_letter_combinations(self):
         self.assertEqual(letter_combinations("23"), ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"])
 
