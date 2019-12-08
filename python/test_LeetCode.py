@@ -146,6 +146,51 @@ class LeetTests(unittest.TestCase):
                                                       "()(())",
                                                       "()()()"])
 
+    # 23
+    def test_merge_k_sorted_lists(self):
+        """
+        1->4->5,
+        1->3->4,
+        2->6
+        ]
+        Output: 1->1->2->3->4->4->5->6
+        """
+        ll1 = ListNode([1, 4, 5])
+        ll2 = ListNode([1, 3, 4])
+        ll3 = ListNode([2, 6])
+        res = ListNode([1, 1, 2, 3, 4, 4, 5, 6])
+        self.assertEqual(mergeKLists([ll1, ll2, ll3]).toList(), res.toList())
+
+    # 26
+    def test_remove_duplicates_sorted_array(self):
+        arr = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+        self.assertEqual(removeDuplicates(arr), 5)
+
+    # 28
+    def test_strstr(self):
+        haystack = "hello"
+        needle = "ll"
+        self.assertEqual(strStr(haystack, needle), 2)
+
+        haystack = "aaaaa"
+        needle = "bba"
+        self.assertEqual(strStr(haystack, needle), -1)
+
+        haystack = "a"
+        needle = "a"
+        self.assertEqual(strStr(haystack, needle), 0)
+
+    # 29
+    def test_divide_two_integers(self):
+        dividend, divisor = 10, 3
+        self.assertEqual(divide(dividend, divisor), 3)
+
+    # 33
+    def test_search_rotated_sorted_array(self):
+        nums = [4, 5, 6, 7, 0, 1, 2]
+        target = 0
+        self.assertEqual(search(nums, target), 4)
+
     def test_letter_combinations(self):
         self.assertEqual(letter_combinations("23"), ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"])
 

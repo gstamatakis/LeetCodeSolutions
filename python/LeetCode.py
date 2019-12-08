@@ -604,40 +604,222 @@ def generateParenthesis(n: int) -> List[str]:
       "()(())",
       "()()()"
     ]
+
+    Runtime: 24 ms, faster than 99.25% of Python3 online submissions for Generate Parentheses.
+    Memory Usage: 12.9 MB, less than 100.00% of Python3 online submissions for Generate Parentheses.
     """
-    if n < 1:
-        return ['']
 
-    def generate(n, ans=None, arr=None):
-        if ans is None:
-            ans = []
-        if arr is None:
-            arr = []
-        if len(arr) == 2 * n:
-            if valid(arr):
-                ans.append(''.join(arr))
-        else:
-            arr.append('(')
-            generate(n, ans, arr)
-            arr.pop()
-            arr.append(')')
-            generate(n, ans, arr)
-            arr.pop()
+    def backtrack(ans, seq='', l=0, r=0):
+        # Check for validation only at 2*n elements
+        if len(seq) == 2 * n:
+            ans.append(seq)
+            return
+        # Try to add more of the missing parenthesis
+        if l < n:
+            backtrack(ans, seq + '(', l + 1, r)
+        if r < l:
+            backtrack(ans, seq + ')', l, r + 1)
 
-    def valid(arr):
-        bal = 0
-        for c in arr:
-            if c == '(':
-                bal += 1
+    ans = []
+    backtrack(ans)
+    return ans
+
+
+def mergeKLists(lists: List[ListNode]) -> ListNode:
+    """
+    Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+    This approach walks alongside the one above but is improved a lot. We don't need to traverse most nodes many times repeatedly
+    Pair up k lists and merge each pair.
+    After the first pairing, k lists are merged into k/2 lists with average 2N/k length, then k/4, k/8 and so on.
+    Repeat this procedure until we get the final sorted linked list.
+    Thus, we'll traverse almost N nodes per pairing and merging, and repeat this procedure about log_{2}{k} times.
+
+    Example:
+    Input:
+    [
+      1->4->5,
+      1->3->4,
+      2->6
+    ]
+    Output: 1->1->2->3->4->4->5->6
+
+    Runtime: 160 ms, faster than 29.31% of Python3 online submissions for Merge k Sorted Lists.
+    Memory Usage: 16 MB, less than 100.00% of Python3 online submissions for Merge k Sorted Lists.
+    """
+
+    def merge(l, r):
+        head = cur = ListNode(0)
+        while l and r:
+            if l.val < r.val:
+                cur.next = l
+                l = l.next
             else:
-                bal -= 1
-            if bal < 0:
-                return False
-        return bal == 0
+                cur.next = r
+                r = r.next
+            cur = cur.next
+        cur.next = l or r
+        return head.next
 
-    answer = []
-    generate(n, answer)
-    return answer
+    # Edge cases
+    if not lists:
+        return None  # Needs to be None
+    elif len(lists) == 1:
+        return lists[0]
+
+    # Divide the list of lists into 2 equal sub-lists and merge each sublist recursively
+    mid = len(lists) // 2
+    l = mergeKLists(lists[:mid])
+    r = mergeKLists(lists[mid:])
+    return merge(l, r)
+
+
+# 26. Remove Duplicates from Sorted Array
+def removeDuplicates(nums: List[int]) -> int:
+    """
+    Given a sorted array nums, remove the duplicates in-place such that each element appear only once and return the new length.
+    Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.
+    Example 1:
+    Given nums = [1,1,2],
+    Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively.
+    It doesn't matter what you leave beyond the returned length.
+
+    Example 2:
+    Given nums = [0,0,1,1,1,2,2,3,3,4],
+    Your function should return length = 5, with the first five elements of nums being modified to 0, 1, 2, 3, and 4 respectively.
+    It doesn't matter what values are set beyond the returned length.
+    Clarification:
+    Confused why the returned value is an integer but your answer is an array?
+    Note that the input array is passed in by reference, which means modification to the input array will be known to the caller as well.
+
+    Internally you can think of this:
+    // nums is passed in by reference. (i.e., without making a copy)
+    int len = removeDuplicates(nums);
+    // any modification to nums in your function would be known by the caller.
+    // using the length returned by your function, it prints the first len elements.
+    for (int i = 0; i < len; i++) {
+        print(nums[i]);
+    }
+
+    Runtime: 76 ms, faster than 99.18% of Python3 online submissions for Remove Duplicates from Sorted Array.
+    Memory Usage: 14.5 MB, less than 98.36% of Python3 online submissions for Remove Duplicates from Sorted Array.
+    """
+    if len(nums) < 1:
+        return 0
+    unq_ptr, unq_val = 1, nums[0]
+    for cur_idx, cur_val in enumerate(nums):
+        if cur_val != unq_val:
+            unq_val = nums[unq_ptr] = cur_val
+            unq_ptr += 1
+    return unq_ptr
+
+
+# 28. Implement strStr()
+def strStr(haystack: str, needle: str) -> int:
+    """
+    Implement strStr().
+    Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+
+    Example 1:
+    Input: haystack = "hello", needle = "ll"
+    Output: 2
+
+    Example 2:
+    Input: haystack = "aaaaa", needle = "bba"
+    Output: -1
+    Clarification:
+
+    What should we return when needle is an empty string? This is a great question to ask during an interview.
+    For the purpose of this problem, we will return 0 when needle is an empty string.
+    This is consistent to C's strstr() and Java's indexOf().
+
+    Runtime: 24 ms, faster than 97.35% of Python3 online submissions for Implement strStr().
+    Memory Usage: 12.8 MB, less than 100.00% of Python3 online submissions for Implement strStr().
+    """
+    if not needle:
+        return 0
+    len_n, len_h = len(needle), len(haystack)
+    if len_n > len_h:
+        return -1
+    for idx_haystack in range(len_h - len_n + 1):
+        for idx_needle in range(len_n):
+            if haystack[idx_haystack + idx_needle] != needle[idx_needle]:
+                break
+        else:
+            return idx_haystack
+    return -1
+
+
+# 29. Divide Two Integers
+def divide(dividend: int, divisor: int) -> int:
+    """
+    Given two integers dividend and divisor, divide two integers without using multiplication, division and mod operator.
+    Return the quotient after dividing dividend by divisor.
+
+    The integer division should truncate toward zero.
+
+    Example 1:
+    Input: dividend = 10, divisor = 3
+    Output: 3
+
+    Example 2:
+    Input: dividend = 7, divisor = -3
+    Output: -2
+    Note:
+
+    Both dividend and divisor will be 32-bit signed integers.
+    The divisor will never be 0.
+    Assume we are dealing with an environment which could only store integers within the 32-bit signed integer
+    range: [−2^31,  2^31 − 1]. For the purpose of this problem, assume that your function returns 2^31 − 1 when
+    the division result overflows.
+
+    Runtime: 28 ms, faster than 94.12% of Python3 online submissions for Divide Two Integers.
+    Memory Usage: 12.8 MB, less than 100.00% of Python3 online submissions for Divide Two Integers.
+
+    Runtime: 24 ms, faster than 98.34% of Python3 online submissions for Divide Two Integers.
+    Memory Usage: 12.7 MB, less than 100.00% of Python3 online submissions for Divide Two Integers.
+    """
+    abs_dividend, abs_divisor, res, sign = abs(dividend), abs(divisor), 0, (dividend > 0) == (divisor > 0)
+    while abs_dividend >= abs_divisor:
+        x = 0
+        while abs_dividend >= abs_divisor << (x + 1):
+            x += 1
+        res += 1 << x
+        abs_dividend -= abs_divisor << x
+    return min(res if sign else -res, pow(2, 31) - 1)
+
+
+# 33. Search in Rotated Sorted Array
+def search(nums: List[int], target: int) -> int:
+    """
+    Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+    (i.e., [0,1,2,4,5,6,7] might become [4,5,6,7,0,1,2]).
+
+    You are given a target value to search. If found in the array return its index, otherwise return -1.
+    You may assume no duplicate exists in the array.
+    Your algorithm's runtime complexity must be in the order of O(log n).
+
+    Example 1:
+    Input: nums = [4,5,6,7,0,1,2], target = 0
+    Output: 4
+
+    Example 2:
+    Input: nums = [4,5,6,7,0,1,2], target = 3
+    Output: -1
+
+    Runtime: 40 ms, faster than 88.18% of Python3 online submissions for Search in Rotated Sorted Array.
+    Memory Usage: 12.9 MB, less than 100.00% of Python3 online submissions for Search in Rotated Sorted Array.
+    """
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= target < nums[mid] or target < nums[mid] < nums[lo] or nums[mid] < nums[lo] <= target:
+            hi = mid - 1
+        else:
+            lo = mid + 1
+    return -1
 
 
 def letter_combinations(digits: str) -> List[str]:
