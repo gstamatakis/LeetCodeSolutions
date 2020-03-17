@@ -329,13 +329,13 @@ def regex_match(s: str, p: str) -> bool:
     Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
     '.' Matches any single character.
     '*' Matches zero or more of the preceding element.
-    
+
     Intuition
 
     As the problem has an optimal substructure, it is natural to cache intermediate results. We ask the question 
     dp(i, j): does text[i:]text[i:] and pattern[j:]pattern[j:] match? We can
     describe our answer in terms of answers to questions involving smaller strings.
-    
+
     Algorithm
     We proceed with the same recursion as in Approach 1, except because calls will only ever be made to
     match(text[i:],pattern[j:]), we use dp(i, j) to handle those calls instead, saving us expensive string-building
@@ -432,7 +432,8 @@ def integer_to_roman(num: int) -> str:
         return ''
     out = ''
     values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-    Roman = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+    Roman = ["M", "CM", "D", "CD", "C", "XC",
+             "L", "XL", "X", "IX", "V", "IV", "I"]
     for i in range(len(values)):
         while num >= values[i]:
             num -= values[i]
@@ -820,6 +821,138 @@ def search(nums: List[int], target: int) -> int:
         else:
             lo = mid + 1
     return -1
+
+
+# 42. Trapping Rain Water
+def trap_brute_force(height: List[int]) -> int:
+    """
+    Given n non-negative integers representing an elevation map where the width of each bar is 1,
+    compute how much water it is able to trap after raining.
+    Example:
+        Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+        Output: 6
+    """
+    if not height or len(height) < 3:
+        return 0
+    ans = 0
+    for pos, h in enumerate(height):
+        max_left = max(height[:pos], default=0)
+        max_right = max(height[pos:], default=0)
+        ans += max(0, min(max_left, max_right) - h)
+    return ans
+
+
+# 42
+def trap_2P(height):
+    """
+    Runtime: 56 ms, faster than 44.10% of Python3 online submissions for Trapping Rain Water.
+    Memory Usage: 13.5 MB, less than 65.12% of Python3 online submissions for Trapping Rain Water.
+    """
+    if not height or len(height) < 3:
+        return 0
+    l, r = 0, len(height) - 1
+    l_max, r_max = height[l], height[r]
+    ans = 0
+    while l < r:
+        l_max = max(l_max, height[l])
+        r_max = max(r_max, height[r])
+        if l_max <= r_max:
+            ans += (l_max - height[l])
+            l += 1
+        else:
+            ans += (r_max - height[r])
+            r -= 1
+    return ans
+
+
+# 42
+def trap_DP(height: List[int]) -> int:
+    if not height or len(height) < 3:
+        return 0
+
+    n = len(height)
+
+    left_dp = [0 for _ in range(n)]
+    right_dp = [0 for _ in range(n)]
+    left_dp[0] = height[0]
+    right_dp[-1] = height[-1]
+
+    # dp array from left to right record max height so far
+    for i in range(1, n):
+        left_dp[i] = max(left_dp[i - 1], height[i])
+
+    # dp array from right to left record max height so far
+    for i in range(n - 2, -1, -1):
+        right_dp[i] = max(right_dp[i + 1], height[i])
+
+    res = 0
+    for pos, h in enumerate(height):
+        res += min(left_dp[pos], right_dp[pos]) - h
+    return res
+
+
+# 42
+def trap_Stack(height: List[int]) -> int:
+    decreasingHeightStack, totalWaterTrapped = [], 0
+    for i, v in enumerate(height):
+        while decreasingHeightStack and height[decreasingHeightStack[-1]] < v:
+            bottomHeight = height[decreasingHeightStack.pop()]
+            if not decreasingHeightStack:
+                break
+            leftUpperIndex = decreasingHeightStack[-1]
+            heightDiff = min(height[leftUpperIndex], v) - bottomHeight
+            width = i - leftUpperIndex - 1
+            totalWaterTrapped += heightDiff * width
+        decreasingHeightStack.append(i)
+    return totalWaterTrapped
+
+
+# 44. Wildcard Matching
+def wildcard_match(s: str, p: str) -> bool:
+    """
+    Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*'.
+    '?' Matches any single character.
+    '*' Matches any sequence of characters (including the empty sequence).
+    The matching should cover the entire input string (not partial).
+    Note:
+    s could be empty and contains only lowercase letters a-z.
+    p could be empty and contains only lowercase letters a-z, and characters like ? or *.
+    Example 1:
+
+    Input:
+    s = "aa"
+    p = "a"
+    Output: false
+    Explanation: "a" does not match the entire string "aa".
+    Example 2:
+
+    Input:
+    s = "aa"
+    p = "*"
+    Output: true
+    Explanation: '*' matches any sequence.
+    Example 3:
+
+    Input:
+    s = "cb"
+    p = "?a"
+    Output: false
+    Explanation: '?' matches 'c', but the second letter is 'a', which does not match 'b'.
+    Example 4:
+
+    Input:
+    s = "adceb"
+    p = "*a*b"
+    Output: true
+    Explanation: The first '*' matches the empty sequence, while the second '*' matches the substring "dce".
+    Example 5:
+
+    Input:
+    s = "acdcb"
+    p = "a*c?b"
+    Output: false
+    """
+    pass
 
 
 def letter_combinations(digits: str) -> List[str]:

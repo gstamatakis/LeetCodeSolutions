@@ -105,12 +105,14 @@ class LeetTests(unittest.TestCase):
 
     # 14
     def test_longest_common_prefix(self):
-        self.assertEqual(longest_common_prefix(["flower", "flow", "flight"]), "fl")
+        self.assertEqual(longest_common_prefix(
+            ["flower", "flow", "flight"]), "fl")
         self.assertEqual(longest_common_prefix(["dog", "racecar", "car"]), "")
 
     # 15
     def test_three_sum(self):
-        self.assertEqual(threeSum([-1, 0, 1, 2, -1, -4]), [[-1, 1, 0], [-1, 2, -1]])
+        self.assertEqual(
+            threeSum([-1, 0, 1, 2, -1, -4]), [[-1, 1, 0], [-1, 2, -1]])
         self.assertEqual(threeSum([1, 1, 1, 1, 1]), [])
         self.assertEqual(threeSum([0, 0, 0]), [[0, 0, 0]])
         self.assertEqual(threeSum([0, 0, 0, 0, 0]), [[0, 0, 0]])
@@ -191,12 +193,23 @@ class LeetTests(unittest.TestCase):
         target = 0
         self.assertEqual(search(nums, target), 4)
 
+    # 42
+    def test_trap(self):
+        height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+        target = 6
+        self.assertEqual(trap_brute_force(height), target)
+        self.assertEqual(trap_DP(height), target)
+        self.assertEqual(trap_2P(height), target)
+        self.assertEqual(trap_Stack(height), target)
+
     def test_letter_combinations(self):
-        self.assertEqual(letter_combinations("23"), ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"])
+        self.assertEqual(letter_combinations("23"), [
+            "ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"])
 
     # 739
     def test_daily_temperature(self):
-        self.assertEqual(daily_temperature([73, 74, 75, 71, 69, 72, 76, 73]), [1, 1, 4, 2, 1, 1, 0, 0])
+        self.assertEqual(daily_temperature(
+            [73, 74, 75, 71, 69, 72, 76, 73]), [1, 1, 4, 2, 1, 1, 0, 0])
 
 
 if __name__ == '__main__':
