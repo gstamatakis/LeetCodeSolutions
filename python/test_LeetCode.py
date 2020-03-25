@@ -4,6 +4,12 @@ from python.LeetCode import *
 
 
 class LeetTests(unittest.TestCase):
+    # UTILS
+    def listOfListsEqual(self, l1, l2):
+        if not l1 or l2:
+            return False
+        return sorted(l1) == sorted(l2)
+
     # 1
     def test_twoSum(self):
         """
@@ -201,6 +207,148 @@ class LeetTests(unittest.TestCase):
         self.assertEqual(trap_DP(height), target)
         self.assertEqual(trap_2P(height), target)
         self.assertEqual(trap_Stack(height), target)
+
+    # 44
+    def test_pattern_matching(self):
+        """
+        Example 1:
+        Input:
+        s = "aa"
+        p = "a"
+        Output: false
+        Explanation: "a" does not match the entire string "aa".
+        Example 2:
+
+        Input:
+        s = "aa"
+        p = "*"
+        Output: true
+        Explanation: '*' matches any sequence.
+        Example 3:
+
+        Input:
+        s = "cb"
+        p = "?a"
+        Output: false
+        Explanation: '?' matches 'c', but the second letter is 'a', which does not match 'b'.
+        Example 4:
+
+        Input:
+        s = "adceb"
+        p = "*a*b"
+        Output: true
+        Explanation: The first '*' matches the empty sequence, while the second '*' matches the substring "dce".
+        Example 5:
+
+        Input:
+        s = "acdcb"
+        p = "a*c?b"
+        Output: false
+        """
+        self.assertEqual(wildcard_match('aa', 'a'), False)
+        self.assertEqual(wildcard_match('aa', '*'), True)
+        self.assertEqual(wildcard_match('cb', '?a'), False)
+        self.assertEqual(wildcard_match('adceb', '*a*b'), True)
+        self.assertEqual(wildcard_match('acdcb', 'a*c?b'), False)
+
+        self.assertEqual(wildcard_match_DP('aa', 'a'), False)
+        self.assertEqual(wildcard_match_DP('aa', '*'), True)
+        self.assertEqual(wildcard_match_DP('cb', '?a'), False)
+        self.assertEqual(wildcard_match_DP('adceb', '*a*b'), True)
+        self.assertEqual(wildcard_match_DP('acdcb', 'a*c?b'), False)
+
+    # 46
+    def test_permute(self):
+        input = [1, 2, 3]
+        expected = [
+            [1, 2, 3],
+            [1, 3, 2],
+            [2, 1, 3],
+            [2, 3, 1],
+            [3, 1, 2],
+            [3, 2, 1]
+        ]
+        self.listOfListsEqual(permute_dfs(input), expected)
+        self.listOfListsEqual(permute_reduce(input), expected)
+
+    # 48
+    def test_rotate(self):
+        """
+        Example 1:
+        Given input matrix =
+        [
+          [1,2,3],
+          [4,5,6],
+          [7,8,9]
+        ],
+
+        rotate the input matrix in-place such that it becomes:
+        [
+          [7,4,1],
+          [8,5,2],
+          [9,6,3]
+        ]
+        Example 2:
+
+        Given input matrix =
+        [
+          [ 5, 1, 9,11],
+          [ 2, 4, 8,10],
+          [13, 3, 6, 7],
+          [15,14,12,16]
+        ],
+
+        rotate the input matrix in-place such that it becomes:
+        [
+          [15,13, 2, 5],
+          [14, 3, 4, 1],
+          [12, 6, 8, 9],
+          [16, 7,10,11]
+        ]
+        """
+        matrix = [
+            [5, 1, 9, 11],
+            [2, 4, 8, 10],
+            [13, 3, 6, 7],
+            [15, 14, 12, 16]
+        ]
+        rotate(matrix)
+        expected = [[15, 13, 2, 5],
+                    [14, 3, 4, 1],
+                    [12, 6, 8, 9],
+                    [16, 7, 10, 11]]
+
+        self.listOfListsEqual(matrix, expected)
+
+        matrix = [
+            [5, 1, 9, 11],
+            [2, 4, 8, 10],
+            [13, 3, 6, 7],
+            [15, 14, 12, 16]
+        ]
+        rotate_B(matrix)
+        self.listOfListsEqual(matrix, expected)
+
+    # 49
+    def test_groupAnagrams(self):
+        input = ["eat", "tea", "tan", "ate", "nat", "bat"]
+        expected = [
+            ["ate", "eat", "tea"],
+            ["nat", "tan"],
+            ["bat"]
+        ]
+        self.listOfListsEqual(groupAnagrams(input), expected)
+
+    # 50
+    def test_myPow(self):
+        self.assertEqual(myPow(2, 10.0), 1024.0)
+
+    # 53
+    def test_subarraySum(self):
+        target = 6
+        input = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+        self.assertEqual(maxSubArray(input), target)
+        self.assertEqual(maxSubArrayDnC(input), target)
 
     def test_letter_combinations(self):
         self.assertEqual(letter_combinations("23"), [

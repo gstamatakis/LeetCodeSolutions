@@ -1,6 +1,9 @@
 ###UTILS###
 # Definition for singly-linked list.
+from functools import reduce
 from typing import List
+
+from math import floor
 
 
 class ListNode:
@@ -917,42 +920,208 @@ def wildcard_match(s: str, p: str) -> bool:
     Note:
     s could be empty and contains only lowercase letters a-z.
     p could be empty and contains only lowercase letters a-z, and characters like ? or *.
+    """
+    s_itr = p_itr = 0
+    ls = len(s)
+    lp = len(p)
+    star = s_idx = -1
+    while s_itr < ls:
+        if p_itr < lp and (s[s_itr] == p[p_itr] or p[p_itr] == "?"):
+            p_itr += 1
+            s_itr += 1
+        elif p_itr < lp and p[p_itr] == "*":
+            star = p_itr
+            s_idx = s_itr
+            p_itr += 1  # I just take the "*" zero times
+        elif star != -1:
+            p_itr = star + 1  # star at star eats all the char before and at s_idx
+            s_idx += 1  # i eat the char at s_idx
+            s_itr = s_idx
+        else:
+            return False
+
+    while p_itr < lp and p[p_itr] == "*":
+        p_itr += 1
+
+    return p_itr == lp
+
+
+# 44
+def wildcard_match_DP(s: str, p: str) -> bool:
+    m = len(s)
+    n = len(p)
+
+    if n == 0 and m == 0:
+        return True
+    if n == 0 and m != 0:
+        return False
+    if p.count('*') == len(p):
+        return True
+    if len(p) - p.count('*') > m:
+        return False
+
+    dp = [True] + [False] * m
+    for cp in p:
+        if cp != '*':
+            for i in range(m, 0, -1):  # m, m-1, .. 1
+                dp[i] = dp[i - 1] and (cp == '?' or s[i - 1] == cp)
+        else:
+            for i in range(1, m + 1):
+                dp[i] = dp[i] or dp[i - 1]
+        dp[0] = dp[0] and cp == '*'
+
+    return dp[m]
+
+
+# 46. Permutations
+def permute_dfs(nums: List[int]) -> List[List[int]]:
+    """
+    Given a collection of distinct integers, return all possible permutations.
+
+    Example:
+
+    Input: [1,2,3]
+    Output:
+    [
+      [1,2,3],
+      [1,3,2],
+      [2,1,3],
+      [2,3,1],
+      [3,1,2],
+      [3,2,1]
+    ]
+    """
+
+    def dfs(nums, path, res):
+        if not nums:
+            res.append(path)
+        for i in range(len(nums)):
+            dfs(nums[:i] + nums[i + 1:], path + [nums[i]], res)
+
+    res = []
+    dfs(nums, [], res)
+    return res
+
+
+# 46
+def permute_reduce(nums: List[int]) -> List[List[int]]:
+    return reduce(lambda P, n: [p[:i] + [n] + p[i:] for p in P for i in range(len(p) + 1)], nums, [[]])
+
+
+# 48
+def rotate(matrix: List[List[int]]) -> None:
+    """
+    Do not return anything, modify matrix in-place instead.
+    You are given an n x n 2D matrix representing an image.
+
+    Rotate the image by 90 degrees (clockwise).
+
+    Note:
+
+    You have to rotate the image in-place, which means you have to modify the input 2D matrix directly.
+    DO NOT allocate another 2D matrix and do the rotation.
+
+    Runtime: 36 ms, faster than 39.35% of Python3 online submissions for Rotate Image.
+    Memory Usage: 13 MB, less than 95.83% of Python3 online submissions for Rotate Image.
+    """
+    n = len(matrix)
+    for i in range(floor(n / 2)):
+        for j in range(n - floor(n / 2)):
+            matrix[i][j], matrix[~j][i], matrix[~i][~j], matrix[j][~i] = \
+                matrix[~j][i], matrix[~i][~j], matrix[j][~i], matrix[i][j]
+
+
+# 48
+def rotate_B(matrix: List[List[int]]) -> None:
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        for j in range(int(n / 2)):
+            row[j], row[~j] = row[~j], row[j]
+
+
+# 49. Group Anagrams
+def groupAnagrams(strs: List[str]) -> List[List[str]]:
+    """
+    Given an array of strings, group anagrams together.
+
+    Example:
+
+    Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+    Output:
+    [
+      ["ate","eat","tea"],
+      ["nat","tan"],
+      ["bat"]
+    ]
+    Note:
+
+    All inputs will be in lowercase.
+    The order of your output does not matter.
+
+    Runtime: 100 ms, faster than 72.53% of Python3 online submissions for Group Anagrams.
+    Memory Usage: 16.5 MB, less than 45.28% of Python3 online submissions for Group Anagrams.
+    """
+    d = {}
+    for w in strs:
+        key = tuple(sorted(w))
+        d[key] = d.get(key, []) + [w]
+    return list(d.values())
+
+
+# 50. Pow(x, n)
+def myPow(x, n):
+    """
+    Implement pow(x, n), which calculates x raised to the power n (xn).
+
     Example 1:
 
-    Input:
-    s = "aa"
-    p = "a"
-    Output: false
-    Explanation: "a" does not match the entire string "aa".
+    Input: 2.00000, 10
+    Output: 1024.00000
     Example 2:
 
-    Input:
-    s = "aa"
-    p = "*"
-    Output: true
-    Explanation: '*' matches any sequence.
+    Input: 2.10000, 3
+    Output: 9.26100
     Example 3:
 
-    Input:
-    s = "cb"
-    p = "?a"
-    Output: false
-    Explanation: '?' matches 'c', but the second letter is 'a', which does not match 'b'.
-    Example 4:
+    Input: 2.00000, -2
+    Output: 0.25000
+    Explanation: 2-2 = 1/22 = 1/4 = 0.25
+    Note:
 
-    Input:
-    s = "adceb"
-    p = "*a*b"
-    Output: true
-    Explanation: The first '*' matches the empty sequence, while the second '*' matches the substring "dce".
-    Example 5:
-
-    Input:
-    s = "acdcb"
-    p = "a*c?b"
-    Output: false
+    -100.0 < x < 100.0
+    n is a 32-bit signed integer, within the range [−231, 231 − 1]
     """
-    pass
+    if not n:
+        return 1
+    if n < 0:
+        return 1 / myPow(x, -n)
+    if n % 2:
+        return x * myPow(x, n - 1)
+    return myPow(x * x, n / 2)
+
+
+# 53. Maximum Subarray
+def maxSubArray(nums: List[int]) -> int:
+    """
+    Given an integer array nums, find the contiguous subarray
+    (containing at least one number) which has the largest sum and
+     return its sum.
+
+    Example:
+    Input: [-2,1,-3,4,-1,2,1,-5,4],
+    Output: 6
+    Explanation: [4,-1,2,1] has the largest sum = 6.
+    Follow up:
+
+    If you have figured out the O(n) solution, try coding another solution using the divide and conquer
+    approach, which is more subtle.
+    """
+    for i in range(1, len(nums)):
+        nums[i] = max(nums[i], nums[i - 1] + nums[i])
+    return max(nums)
 
 
 def letter_combinations(digits: str) -> List[str]:
